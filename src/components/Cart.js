@@ -1,19 +1,50 @@
-import { useEffect } from "react";
+
 import { useCart } from "../context/CartContext";
 import { ITEM_LOGO } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useOrder } from "../context/OrderContext";
+import { loadStripe } from "@stripe/stripe-js";
+import useAuthHeaders from "../utils/useAuthHeaders";
 const Cart = ()=>{
+  
   const {cartItems, fetchCart, addItem, removeItem, clearCart} = useCart();
+  const {placeOrder, currentOrder} = useOrder();
+  const authHeaders = useAuthHeaders();
   const{user} = useAuth();
   const navigate = useNavigate();
   const items = Object.values(cartItems);
   const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  // const handleAdd = (item)=>{
-  //     // console.log(item);
-  //     addItem(item);
-  // }
+  const stripePromise = loadStripe("pk_test_51S3XSLECvSWcQh9Dj460G1B6yy5ygkw5FOcQF4MDiKANnrpljxaGGmbusrNR9DT5boSuBcxPp5vBkOiKu37uyKoq00eMTV8bZH");
+
+  const order = {
+    items: items,
+    totalAmount: total
+  }
+  localStorage.setItem("pendingOrder", JSON.stringify(order));
+
   console.log(items);
+  const handlePlaceOrder = async ()=>{
+    try {
+      const res = await fetch("http://localhost:8080/api/payment/checkout",
+        {
+          method: "POST",
+          headers : authHeaders,
+          body: JSON.stringify(order),
+        }
+      )
+
+      if(!res.ok){
+        throw new Error("Failed to create checkout session");
+      }
+      const data = await res.json();
+      const stripe = await stripePromise;
+      await stripe.redirectToCheckout({ sessionId: data.sessionId });
+    } catch (error) {
+      console.error("Payment Error: ",error);
+      alert("Something went wrong with payment......");
+    }
+  }
   
   if (items.length === 0) {
     return (
@@ -68,7 +99,9 @@ const Cart = ()=>{
             <button onClick={()=> clearCart()} className="mt-4 bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700"> 
               Clear Cart
             </button>
-            <button className="mt-4 bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700">
+            <button className="mt-4 bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700"
+              onClick={()=> handlePlaceOrder(order)}
+            >
               Proceed to Checkout
             </button>
             

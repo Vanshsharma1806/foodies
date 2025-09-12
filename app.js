@@ -13,15 +13,18 @@ import { AuthProvider } from "./src/context/AuthContext";
 import ProtectedRoute from "./src/components/ProtectedRoute";
 import { CartProvider } from "./src/context/CartContext";
 import Cart from "./src/components/Cart";
+import { OrderProvider } from "./src/context/OrderContext";
+import OrderStatus from "./src/components/OrderStatus";
+import PaymentCancel from "./src/components/PaymentCancel";
+import PaymentSuccess from "./src/components/PaymentSuccess";
 
 const AppLayout = ()=>{
 
-    return <div className="app-layout">
+    return <div className="app-layout  bg-gray-200">
         <Header/>
         <Outlet/>
     </div>
 }
-
 
 const appRouter  = createBrowserRouter([
     {
@@ -41,6 +44,22 @@ const appRouter  = createBrowserRouter([
                 element:(
                     <ProtectedRoute>
                         <About/>
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path:"/success",
+                element:(
+                    <ProtectedRoute>
+                        <PaymentSuccess/>
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path:"/cancel",
+                element:(
+                    <ProtectedRoute>
+                        <PaymentCancel/>
                     </ProtectedRoute>
                 ),
             },
@@ -71,6 +90,9 @@ const appRouter  = createBrowserRouter([
             {
                 path:"/cart",
                 element: <Cart/>
+            },{
+                path: "/order/:orderId",
+                element: <OrderStatus/>
             }
         ],
         errorElement:<Error/>,
@@ -81,8 +103,10 @@ const appRouter  = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <AuthProvider>
-        <CartProvider>
-            <RouterProvider router={appRouter}/>
-        </CartProvider>
+        <OrderProvider>
+            <CartProvider>
+                <RouterProvider router={appRouter}/>
+            </CartProvider>
+        </OrderProvider>
     </AuthProvider>
 )

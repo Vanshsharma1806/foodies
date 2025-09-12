@@ -30,8 +30,6 @@ export const AuthProvider = ({children})=>{
                 method: "POST",
                 headers : {
                     "Content-Type" : "application/json",
-                    
-
                 },
                 body: JSON.stringify({email, password}),
             });
@@ -41,6 +39,7 @@ export const AuthProvider = ({children})=>{
             }
             
             const data = await res.json();
+            console.log(data);
             const userData = {
                 id: data.id,
                 username: data.username,

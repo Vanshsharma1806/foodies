@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import useOnlineStatus from "../utils/useOnlineStatus";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { useEffect } from "react";
 
 
 const Header = ()=>{
@@ -15,10 +16,22 @@ const Header = ()=>{
     const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
     const {cartItems} = useCart();
     const totalItems = Object.values(cartItems).reduce((acc, curr) => acc + curr.quantity, 0);
+    const [currentOrderId, setCurrentOrderId] = useState(localStorage.getItem("currentOrderId"));
 
+
+
+    useEffect(
+        () => {
+             // Check if there's a current order stored
+            const id = localStorage.getItem("currentOrderId");
+            if (id) {
+                setCurrentOrderId(id);
+            }
+        }, 
+    [currentOrderId]);
 
     return (
-    <div className="bg-gray-100 flex justify-between items-center shadow-xl">
+    <div className="   bg-cyan-300 -mt-5 rounded-md flex w-full justify-between items-center shadow-xl">
         <div className="logo-container">
             <Link to="/"><img className=" m-2 w-24 rounded-lg shadow-lg" alt="logo" src={LOGO_URL}></img></Link>
         </div>
@@ -30,6 +43,9 @@ const Header = ()=>{
                         <li className=" mx-1 font-semibold "><Link to="/">Home</Link></li> 
                         <li className=" mx-1 font-semibold "><Link to="/about"> About Us</Link> </li> 
                         <li className=" mx-1 font-semibold "><Link to="/contact"> Contact</Link></li> 
+                        {currentOrderId && (
+                            <li className="mx-1 font-semibold"> <Link to= {`/order/${currentOrderId}`}> Latest Order</Link> </li>
+                        )}
                     
                         <div className="relative flex cursor-pointer" onClick={() => navigate("/cart")}>
                             <button className=" mx-1 font-semibold cursor-pointer " >Cart</button>

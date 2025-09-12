@@ -5,7 +5,7 @@ const ProtectedRoute = ({children}) =>{
     const {isLoggedIn} = useAuth();
     const location = useLocation();
 
-    if(!isLoggedIn && !["/login", "/signup"].includes(location.pathname)){
+    if(!isLoggedIn && !["/login", "/signup", "/order", "/success", "/cancel"].includes(location.pathname)){
         return <Navigate to="/login" replace/>
     }
     return children;

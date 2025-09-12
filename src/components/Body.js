@@ -49,14 +49,14 @@ const Body = ()=>{
   
     if(filteredList.length === 0){
         return (
-            <div>
+            <div className="mt-6">
                 <div className="buttons flex items-center m-2  bg-gray-200 ">
                     <button className="filter-btn mx-2 bg-gray-300 rounded-xl w-20 " onClick={filter} >
                         {!isFiltered ? "Top ⭐" : "see all" }
                     </button>
 
                     <div className="search">
-                        <input className="input  bg-gray-200 border border-black rounded-xl px-2" type="text" value={searchValue}  onChange={(e)=>{
+                        <input className="input  bg-white border border-black rounded-md px-2" type="text" value={searchValue}  onChange={(e)=>{
                             setSearchValue(e.target.value);
                         }}></input>
                         <button className="search-btn mx-2 bg-gray-300 rounded-xl w-20"  onClick={()=>{
@@ -77,7 +77,7 @@ const Body = ()=>{
 
     
     return (
-        <div className="Body  bg-gray-200" >
+        <div className="Body mt-6" >
             <div className="buttons flex items-center m-2   ">
                 <button className="filter-btn mx-2 bg-gray-300 rounded-xl w-20  " onClick={filter} >
                     {!isFiltered ? "Top ⭐" : "see all" }

@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect } from "react";
 import { useState } from "react";
 import useAuthHeaders from "../utils/useAuthHeaders";
 import { useAuth } from "./AuthContext";
+
+
 const CartContext = createContext();
 
 export const CartProvider = ({children}) => {
@@ -13,10 +15,10 @@ export const CartProvider = ({children}) => {
         if(!user?.token) return;
         try{
             const res = await fetch("http://localhost:8080/api/Cart/get-cart",{
-            method: "GET",
-            headers: authHeaders
-            }
-            );
+                method: "GET",
+                headers: authHeaders
+            });
+            
             if(!res.ok) throw new Error("failed to fetch cart");
             const data = await res.json()
 
@@ -25,7 +27,6 @@ export const CartProvider = ({children}) => {
                 itemsMap[item.itemId] = item;
             });
             setCartItems(itemsMap);
-            await console.log(cartItems)
         }catch(err){
             console.error("cart load error..", err);
         }
